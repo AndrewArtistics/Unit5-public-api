@@ -13,7 +13,8 @@ let results = [];
 
 //calls the fetchUsers function to retrieve the user API
 fetchUsers('https://randomuser.me/api/?inc=picture,name,location,phone,dob,email,state&results=12&nat=us')
-    .catch( error => console.log(error));
+    .then(()=>searchFilter())
+    .catch( error => console.log('Oops, something went wrong...', error));
 
 //reusable fetch function
 //fetchUsers is fed a url (in this case, https://randomuser.me/api/) which is modified for our specific needs.
@@ -37,7 +38,7 @@ function displayGallery(user){
     const divCard = document.createElement('div');
     gallery.appendChild(divCard);
     divCard.className ='card';
-
+    
     //inserts the html for each user card and displays the proper information pulled from the fetch request
     divCard.innerHTML = `
     <div class="card-img-container">
@@ -60,7 +61,42 @@ function displayGallery(user){
 Search container
 ******************************/
 
-//dskjhfksdhf
+//Making a variable for the search html and then attaching it to the searchContainer div
+const searchHTML = `<form action="#" method="get">
+        <input type="search" id="search-input" class="search-input" placeholder="Search...">
+        <input type="submit" value="&#x1F50D;" id="search-submit" class="search-submit">
+    </form>`;
+searchContainer.innerHTML = searchHTML;
+
+//function to filter out user cards when characters typed match/don't match
+function searchFilter(){
+    let input = document.querySelector('#search-input');
+    const userCards = gallery.children;
+    const search = document.querySelector('#search-submit')
+
+    function filteredUsers(){
+       let inputTxt = input.value;
+
+       for(let user of userCards){
+           const username = user.querySelector('#name').textContent;
+           if (inputTxt != ''){
+               if (username.toLowerCase().includes(inputTxt.toLowerCase())){
+                   user.style.display = '';
+               } else{
+                   user.style.display = 'none';
+               };
+           };
+       };
+    };
+
+    input.addEventListener('input',()=>{
+        filteredUsers();
+    });
+    search.addEventListener('click', (e)=>{
+        e.preventDefault();
+        filteredUsers();
+    });
+};
 
 /*****************************
 MODAL WINDOWS
